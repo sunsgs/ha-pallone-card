@@ -12,3 +12,5 @@ Then add the card to lovelace (custom:pallone card )
 type: custom:pallone-card
 entity: sensor.pallone
 ```
+
+![alt text](https://github.com/sunsgs/ha-pallone-card/blob/main/imgs/ha-pallone-card.png?raw=true)

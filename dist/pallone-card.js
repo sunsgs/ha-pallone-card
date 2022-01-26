@@ -134,4 +134,4 @@ const G=t=>e=>"function"==typeof e?((t,e)=>(window.customElements.define(t,e),e)
     }
     .league_logo{
       width: 25px;
-    }`}};t([X({attribute:!1})],_t.prototype,"hass",void 0),t([Y()],_t.prototype,"config",void 0),_t=t([G("pallone-card")],_t);export{_t as PalloneCardCulo};
+    }`}};t([X({attribute:!1})],_t.prototype,"hass",void 0),t([Y()],_t.prototype,"config",void 0),_t=t([G("pallone-card")],_t);export{_t as PalloneCard};

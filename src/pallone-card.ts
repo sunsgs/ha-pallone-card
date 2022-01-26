@@ -22,7 +22,7 @@ import {
 
 import './editor';
 
-import type { PalloneCardCuloConfig } from './types';
+import type { PalloneCardConfig } from './types';
 import { actionHandler } from './action-handler-directive';
 import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
@@ -59,7 +59,7 @@ interface matchAttribute {
 }
 // TODO Name your custom element
 @customElement('pallone-card')
-export class PalloneCardCulo extends LitElement {
+export class PalloneCard extends LitElement {
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     return document.createElement('pallone-card-editor');
   }
@@ -72,10 +72,10 @@ export class PalloneCardCulo extends LitElement {
   // https://lit.dev/docs/components/properties/
   @property({ attribute: false }) public hass!: HomeAssistant;
 
-  @state() private config!: PalloneCardCuloConfig;
+  @state() private config!: PalloneCardConfig;
 
   // https://lit.dev/docs/components/properties/#accessors-custom
-  public setConfig(config: PalloneCardCuloConfig): void {
+  public setConfig(config: PalloneCardConfig): void {
     // TODO Check for required fields and that they are of the proper format
     if (!config) {
       throw new Error(localize('common.invalid_configuration'));

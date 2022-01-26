@@ -8,7 +8,7 @@ declare global {
 }
 
 // TODO Add your configuration elements here for type-checking
-export interface PalloneCardCuloConfig extends LovelaceCardConfig {
+export interface PalloneCardConfig extends LovelaceCardConfig {
   type: string;
   name?: string;
   show_warning?: boolean;

@@ -2,7 +2,7 @@
 import { LitElement, html, TemplateResult, css, CSSResultGroup } from 'lit';
 import { HomeAssistant, fireEvent, LovelaceCardEditor, ActionConfig } from 'custom-card-helpers';
 
-import { PalloneCardCuloConfig } from './types';
+import { PalloneCardConfig } from './types';
 import { customElement, property, state } from 'lit/decorators';
 
 const options = {
@@ -15,14 +15,14 @@ const options = {
 };
 
 @customElement('pallone-card-editor')
-export class PalloneCardCuloEditor extends LitElement implements LovelaceCardEditor {
+export class PalloneCardEditor extends LitElement implements LovelaceCardEditor {
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() private _config?: PalloneCardCuloConfig;
+  @state() private _config?: PalloneCardConfig;
   @state() private _toggle?: boolean;
   @state() private _helpers?: any;
   private _initialized = false;
 
-  public setConfig(config: PalloneCardCuloConfig): void {
+  public setConfig(config: PalloneCardConfig): void {
     this._config = config;
 
     this.loadCardHelpers();

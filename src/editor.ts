@@ -2,7 +2,7 @@
 import { LitElement, html, TemplateResult, css, CSSResultGroup } from 'lit';
 import { HomeAssistant, fireEvent, LovelaceCardEditor, ActionConfig } from 'custom-card-helpers';
 
-import { BoilerplateCardConfig } from './types';
+import { PalloneCardCuloConfig } from './types';
 import { customElement, property, state } from 'lit/decorators';
 
 const options = {
@@ -11,50 +11,18 @@ const options = {
     name: 'Required',
     secondary: 'Required options for this card to function',
     show: true,
-  },
-  actions: {
-    icon: 'gesture-tap-hold',
-    name: 'Actions',
-    secondary: 'Perform actions based on tapping/clicking',
-    show: false,
-    options: {
-      tap: {
-        icon: 'gesture-tap',
-        name: 'Tap',
-        secondary: 'Set the action to perform on tap',
-        show: false,
-      },
-      hold: {
-        icon: 'gesture-tap-hold',
-        name: 'Hold',
-        secondary: 'Set the action to perform on hold',
-        show: false,
-      },
-      double_tap: {
-        icon: 'gesture-double-tap',
-        name: 'Double Tap',
-        secondary: 'Set the action to perform on double tap',
-        show: false,
-      },
-    },
-  },
-  appearance: {
-    icon: 'palette',
-    name: 'Appearance',
-    secondary: 'Customize the name, icon, etc',
-    show: false,
-  },
+  }
 };
 
-@customElement('boilerplate-card-editor')
-export class BoilerplateCardEditor extends LitElement implements LovelaceCardEditor {
+@customElement('pallone-card-editor')
+export class PalloneCardCuloEditor extends LitElement implements LovelaceCardEditor {
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() private _config?: BoilerplateCardConfig;
+  @state() private _config?: PalloneCardCuloConfig;
   @state() private _toggle?: boolean;
   @state() private _helpers?: any;
   private _initialized = false;
 
-  public setConfig(config: BoilerplateCardConfig): void {
+  public setConfig(config: PalloneCardCuloConfig): void {
     this._config = config;
 
     this.loadCardHelpers();
@@ -105,7 +73,7 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
     this._helpers.importMoreInfoControl('climate');
 
     // You can restrict on domain type
-    const entities = Object.keys(this.hass.states).filter(eid => eid.substr(0, eid.indexOf('.')) === 'sun');
+    const entities = Object.keys(this.hass.states).filter(eid => eid.split('.')[1] === 'pallone');
 
     return html`
       <div class="card-config">
@@ -135,95 +103,6 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
               </div>
             `
           : ''}
-        <div class="option" @click=${this._toggleOption} .option=${'actions'}>
-          <div class="row">
-            <ha-icon .icon=${`mdi:${options.actions.icon}`}></ha-icon>
-            <div class="title">${options.actions.name}</div>
-          </div>
-          <div class="secondary">${options.actions.secondary}</div>
-        </div>
-        ${options.actions.show
-          ? html`
-              <div class="values">
-                <div class="option" @click=${this._toggleAction} .option=${'tap'}>
-                  <div class="row">
-                    <ha-icon .icon=${`mdi:${options.actions.options.tap.icon}`}></ha-icon>
-                    <div class="title">${options.actions.options.tap.name}</div>
-                  </div>
-                  <div class="secondary">${options.actions.options.tap.secondary}</div>
-                </div>
-                ${options.actions.options.tap.show
-                  ? html`
-                      <div class="values">
-                        <paper-item>Action Editors Coming Soon</paper-item>
-                      </div>
-                    `
-                  : ''}
-                <div class="option" @click=${this._toggleAction} .option=${'hold'}>
-                  <div class="row">
-                    <ha-icon .icon=${`mdi:${options.actions.options.hold.icon}`}></ha-icon>
-                    <div class="title">${options.actions.options.hold.name}</div>
-                  </div>
-                  <div class="secondary">${options.actions.options.hold.secondary}</div>
-                </div>
-                ${options.actions.options.hold.show
-                  ? html`
-                      <div class="values">
-                        <paper-item>Action Editors Coming Soon</paper-item>
-                      </div>
-                    `
-                  : ''}
-                <div class="option" @click=${this._toggleAction} .option=${'double_tap'}>
-                  <div class="row">
-                    <ha-icon .icon=${`mdi:${options.actions.options.double_tap.icon}`}></ha-icon>
-                    <div class="title">${options.actions.options.double_tap.name}</div>
-                  </div>
-                  <div class="secondary">${options.actions.options.double_tap.secondary}</div>
-                </div>
-                ${options.actions.options.double_tap.show
-                  ? html`
-                      <div class="values">
-                        <paper-item>Action Editors Coming Soon</paper-item>
-                      </div>
-                    `
-                  : ''}
-              </div>
-            `
-          : ''}
-        <div class="option" @click=${this._toggleOption} .option=${'appearance'}>
-          <div class="row">
-            <ha-icon .icon=${`mdi:${options.appearance.icon}`}></ha-icon>
-            <div class="title">${options.appearance.name}</div>
-          </div>
-          <div class="secondary">${options.appearance.secondary}</div>
-        </div>
-        ${options.appearance.show
-          ? html`
-              <div class="values">
-                <paper-input
-                  label="Name (Optional)"
-                  .value=${this._name}
-                  .configValue=${'name'}
-                  @value-changed=${this._valueChanged}
-                ></paper-input>
-                <br />
-                <ha-formfield .label=${`Toggle warning ${this._show_warning ? 'off' : 'on'}`}>
-                  <ha-switch
-                    .checked=${this._show_warning !== false}
-                    .configValue=${'show_warning'}
-                    @change=${this._valueChanged}
-                  ></ha-switch>
-                </ha-formfield>
-                <ha-formfield .label=${`Toggle error ${this._show_error ? 'off' : 'on'}`}>
-                  <ha-switch
-                    .checked=${this._show_error !== false}
-                    .configValue=${'show_error'}
-                    @change=${this._valueChanged}
-                  ></ha-switch>
-                </ha-formfield>
-              </div>
-            `
-          : ''}
       </div>
     `;
   }
@@ -237,10 +116,6 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
 
   private async loadCardHelpers(): Promise<void> {
     this._helpers = await (window as any).loadCardHelpers();
-  }
-
-  private _toggleAction(ev): void {
-    this._toggleThing(ev, options.actions.options);
   }
 
   private _toggleOption(ev): void {

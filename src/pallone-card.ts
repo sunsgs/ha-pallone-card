@@ -9,6 +9,7 @@ import {
 } from 'lit';
 import { customElement, property, state } from "lit/decorators";
 import {
+  formatDate,
   HomeAssistant,
   hasConfigOrEntityChanged,
   hasAction,
@@ -21,14 +22,14 @@ import {
 
 import './editor';
 
-import type { BoilerplateCardConfig } from './types';
+import type { PalloneCardCuloConfig } from './types';
 import { actionHandler } from './action-handler-directive';
 import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
 
 /* eslint no-console: 0 */
 console.info(
-  `%c  BOILERPLATE-CARD \n%c  ${localize('common.version')} ${CARD_VERSION}    `,
+  `%c  PALLONE-CARD \n%c  ${localize('common.version')} ${CARD_VERSION}    `,
   'color: orange; font-weight: bold; background: black',
   'color: white; font-weight: bold; background: dimgray',
 );
@@ -36,16 +37,31 @@ console.info(
 // This puts your card into the UI card picker dialog
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
-  type: 'boilerplate-card',
-  name: 'Boilerplate Card',
-  description: 'A template custom card for you to create something awesome',
+  type: 'pallone-card',
+  name: 'Pallone Card',
+  description: 'A custom card to show your favourite club next Match. Best choice of club would be Napoli of course.',
 });
 
+interface matchAttribute {
+  home_team_name?: string;
+  home_team_logo?: string;
+  away_team_logo?: string;
+  away_team_name?: string;
+  match_day?: string;
+  venue?: string;
+  venue_location?: string;
+  referee?: string;
+  league?: string;
+  league_logo?: string;
+  league_round?: string;
+  today_match?: boolean;
+  last_update?: Date;
+}
 // TODO Name your custom element
-@customElement('boilerplate-card')
-export class BoilerplateCard extends LitElement {
+@customElement('pallone-card')
+export class PalloneCardCulo extends LitElement {
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
-    return document.createElement('boilerplate-card-editor');
+    return document.createElement('pallone-card-editor');
   }
 
   public static getStubConfig(): Record<string, unknown> {
@@ -56,10 +72,10 @@ export class BoilerplateCard extends LitElement {
   // https://lit.dev/docs/components/properties/
   @property({ attribute: false }) public hass!: HomeAssistant;
 
-  @state() private config!: BoilerplateCardConfig;
+  @state() private config!: PalloneCardCuloConfig;
 
   // https://lit.dev/docs/components/properties/#accessors-custom
-  public setConfig(config: BoilerplateCardConfig): void {
+  public setConfig(config: PalloneCardCuloConfig): void {
     // TODO Check for required fields and that they are of the proper format
     if (!config) {
       throw new Error(localize('common.invalid_configuration'));
@@ -94,18 +110,22 @@ export class BoilerplateCard extends LitElement {
     if (this.config.show_error) {
       return this._showError(localize('common.show_error'));
     }
-
+    const stateObj = this.config.entity ? this.hass.states[this.config.entity].attributes as matchAttribute : {};
+    const { home_team_name,home_team_logo,away_team_logo,away_team_name,match_day,venue,venue_location,referee,league,league_logo,league_round,today_match,last_update } =  stateObj;
+    const title = today_match ? 'Today Match' : 'Next Match'
+    const dateMatchDate = match_day && new Date(match_day) || new Date();
     return html`
-      <ha-card
-        .header=${this.config.name}
-        @action=${this._handleAction}
-        .actionHandler=${actionHandler({
-          hasHold: hasAction(this.config.hold_action),
-          hasDoubleClick: hasAction(this.config.double_tap_action),
-        })}
-        tabindex="0"
-        .label=${`Boilerplate: ${this.config.entity || 'No Entity Defined'}`}
-      ></ha-card>
+      <ha-card .header=${title} id="pallone-card">
+        <div id="league"><img class="league_logo" src="${league_logo}"></div>
+        <div id="league_round">${league_round}</div>
+        <div id="teams">
+          <div class="team"><img src="${home_team_logo}"></div>
+          <div class="team"><img src="${away_team_logo}"></div>
+        </div>
+        <div id="time">${formatDate(dateMatchDate, this.hass.locale)}</div>
+        <div id="referee">${referee}</div>
+        <div id="venue">${venue}, ${venue_location}</div>
+      </ha-card>
     `;
   }
 
@@ -136,6 +156,21 @@ export class BoilerplateCard extends LitElement {
 
   // https://lit.dev/docs/components/styles/
   static get styles(): CSSResultGroup {
-    return css``;
+    return css`
+    #pallone-card{
+      text-align: center;
+    }
+    #teams{
+      margin: 15px 0;
+    }
+    .team{
+      display: inline-block;
+    }
+    .team img{
+      width: 70px;
+    }
+    .league_logo{
+      width: 25px;
+    }`;
   }
 }

@@ -13,4 +13,6 @@ type: custom:pallone-card
 entity: sensor.pallone
 ```
 
+### example of card
+
 ![alt text](https://github.com/sunsgs/ha-pallone-card/blob/main/imgs/ha-pallone-card.png?raw=true)
